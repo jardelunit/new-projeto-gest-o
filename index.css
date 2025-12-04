@@ -1,0 +1,9 @@
+/* Global stylesheet placeholder for Vite serve */
+:root {
+  color-scheme: dark;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
