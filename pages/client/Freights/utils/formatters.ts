@@ -19,3 +19,17 @@ export const getStatusColor = (status: Freight['status'] | string) => {
 };
 
 export const formatCurrency = (value: number) => value.toLocaleString();
+
+export const getFiscalStatusColor = (status?: Freight['cteStatus']) => {
+  switch (status) {
+    case 'Autorizado':
+      return 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50';
+    case 'Rejeitado':
+      return 'bg-red-500/20 text-red-300 border-red-500/50';
+    case 'Em Processamento':
+      return 'bg-blue-500/20 text-blue-200 border-blue-500/40';
+    case 'Pendente':
+    default:
+      return 'bg-amber-500/20 text-amber-200 border-amber-500/40';
+  }
+};

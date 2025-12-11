@@ -4,8 +4,24 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Card, DataTable, KPICard } from '../../../../components/ui/Common';
 import { Driver, Expense, Freight, Vehicle } from '../../../../types';
-import { ArrowLeft, CheckCircle, DollarSign, Package, Play, Plus, Receipt, Truck, User, XCircle } from 'lucide-react';
-import { formatCurrency, getStatusColor } from '../utils/formatters';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle,
+  DollarSign,
+  Download,
+  FileDown,
+  FileText,
+  Package,
+  Play,
+  Plus,
+  Receipt,
+  ShieldCheck,
+  Truck,
+  User,
+  XCircle,
+} from 'lucide-react';
+import { formatCurrency, getFiscalStatusColor, getStatusColor } from '../utils/formatters';
 
 interface FreightDetailProps {
   freight: Freight;
@@ -26,7 +42,7 @@ const FreightDetail: React.FC<FreightDetailProps> = ({
   onUpdateStatus,
   onAddExpense,
 }) => {
-  const [activeTab, setActiveTab] = useState<'info' | 'financial'>('info');
+  const [activeTab, setActiveTab] = useState<'info' | 'financial' | 'fiscal'>('info');
   const [expenses, setExpenses] = useState<Expense[]>(initialExpenses);
 
   useEffect(() => {
@@ -92,6 +108,14 @@ const FreightDetail: React.FC<FreightDetailProps> = ({
           }`}
         >
           <DollarSign size={18} className="mr-2" /> Financeiro & Despesas
+        </button>
+        <button
+          onClick={() => setActiveTab('fiscal')}
+          className={`flex items-center px-6 py-3 text-sm font-medium border-b-2 ${
+            activeTab === 'fiscal' ? 'border-blue-500 text-blue-400' : 'border-transparent text-slate-400'
+          }`}
+        >
+          <FileText size={18} className="mr-2" /> Documentos Fiscais
         </button>
       </div>
 
@@ -206,6 +230,96 @@ const FreightDetail: React.FC<FreightDetailProps> = ({
               Nenhuma despesa vinculada a este frete.
             </div>
           )}
+        </div>
+      )}
+
+      {activeTab === 'fiscal' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card title="Status Fiscal do CT-e">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <p className="text-sm text-slate-400 mb-1">CT-e #{freight.cteNumber || '—'}</p>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-bold border ${getFiscalStatusColor(freight.cteStatus)}`}
+                  >
+                    {freight.cteStatus || 'Pendente'}
+                  </span>
+                </div>
+                <div className="text-right text-sm text-slate-400">
+                  <p className="text-slate-300 font-semibold">NF-e</p>
+                  <p className="truncate max-w-[220px] text-slate-400">{freight.nfeKey || 'N/A'}</p>
+                  <p className="text-slate-500 mt-1">Tipo: {freight.cteType || 'Normal'}</p>
+                  <p className="text-slate-500">Tomador: {freight.serviceTaker || 'Remetente'}</p>
+                </div>
+              </div>
+            </Card>
+
+            <Card title="MDF-e e Percurso">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs border ${
+                      freight.mdfStatus === 'Aberto'
+                        ? 'bg-amber-500/10 text-amber-300 border-amber-500/40'
+                        : 'bg-slate-800 text-slate-200 border-slate-700'
+                    }`}
+                  >
+                    MDF-e {freight.mdfStatus || 'N/A'}
+                  </span>
+                  {freight.routeUFs && freight.routeUFs.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {freight.routeUFs.map(uf => (
+                        <span
+                          key={uf}
+                          className="px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-xs text-slate-200"
+                        >
+                          {uf}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
+                  {freight.mdfStatus === 'Aberto' && (
+                    <Button variant="secondary" className="text-xs">
+                      Encerrar MDF-e
+                    </Button>
+                  )}
+                  {freight.mdfStatus === 'N/A' && freight.cteStatus === 'Autorizado' && (
+                    <Button className="text-xs">
+                      Emitir MDF-e
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card title="Downloads e Impressos">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="secondary" className="text-sm">
+                  <Download size={16} className="mr-2" /> Baixar DACTE (PDF)
+                </Button>
+                <Button variant="secondary" className="text-sm">
+                  <FileDown size={16} className="mr-2" /> Baixar XML do CT-e
+                </Button>
+              </div>
+            </Card>
+
+            <Card title="Ações CT-e">
+              <div className="flex flex-wrap gap-3">
+                <Button variant="danger" className="text-sm bg-red-500/20 text-red-200 hover:bg-red-500 hover:text-white">
+                  <AlertTriangle size={16} className="mr-2" /> Cancelar CT-e
+                </Button>
+                <Button variant="secondary" className="text-sm">
+                  <ShieldCheck size={16} className="mr-2" /> Carta de Correção
+                </Button>
+              </div>
+            </Card>
+          </div>
         </div>
       )}
     </div>

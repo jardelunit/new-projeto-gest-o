@@ -4,8 +4,8 @@
 import React from 'react';
 import { Button, DataTable, Input } from '../../../../components/ui/Common';
 import { Freight } from '../../../../types';
-import { Filter, Plus, Search, Truck, User } from 'lucide-react';
-import { getStatusColor } from '../utils/formatters';
+import { FileText, Filter, Plus, Search, Truck, User } from 'lucide-react';
+import { getFiscalStatusColor, getStatusColor } from '../utils/formatters';
 
 interface FreightListProps {
   freights: Freight[];
@@ -24,18 +24,28 @@ const FreightList: React.FC<FreightListProps> = ({
 }) => {
   const columns = [
     {
-      header: 'Origem -> Destino',
+      header: 'ID Interno',
       accessor: (row: Freight) => (
-        <div>
-          <div className="font-bold text-white flex items-center">
-            <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-            {row.origin}
+        <div className="text-sm">
+          <p className="text-white font-bold">#{row.id.toUpperCase()}</p>
+          <p className="text-slate-500 text-xs flex items-center gap-1 mt-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+            {row.origin} <span className="text-slate-600">→</span> {row.destination}
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: 'Documento Fiscal',
+      accessor: (row: Freight) => (
+        <div className="text-sm flex flex-col gap-1">
+          <div className="flex items-center gap-2 text-white font-semibold">
+            <FileText size={14} className="text-blue-400" />
+            {row.cteNumber || 'CT-e não emitido'}
           </div>
-          <div className="pl-4 border-l border-slate-700 ml-1 my-1"></div>
-          <div className="font-bold text-white flex items-center">
-            <span className="w-2 h-2 bg-emerald-500 rounded-full mr-2"></span>
-            {row.destination}
-          </div>
+          <span className={`w-fit px-2 py-0.5 rounded-full text-xs border ${getFiscalStatusColor(row.cteStatus)}`}>
+            {row.cteStatus || 'Pendente'}
+          </span>
         </div>
       ),
     },
@@ -52,13 +62,12 @@ const FreightList: React.FC<FreightListProps> = ({
         </div>
       ),
     },
-    { header: 'Data', accessor: 'date' as keyof Freight },
     {
       header: 'Valor',
       accessor: (row: Freight) => <span className="text-emerald-400 font-bold">R$ {row.value.toLocaleString()}</span>,
     },
     {
-      header: 'Status',
+      header: 'Status Operacional',
       accessor: (row: Freight) => (
         <span className={`px-2 py-1 rounded-full text-xs font-bold border ${getStatusColor(row.status)}`}>
           {row.status}

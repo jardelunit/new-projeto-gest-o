@@ -20,6 +20,7 @@ import {
   ChevronDown,
   ChevronUp,
   BarChart3,
+  FileCheck2,
 } from 'lucide-react';
 import { UserRole } from '../../types';
 
@@ -56,8 +57,16 @@ const Sidebar: React.FC<SidebarProps> = ({ role, isOpen, onClose }) => {
         { name: 'Relatório', path: '/client/fleet?tab=report', icon: <BarChart3 size={18} /> },
       ],
     },
+    {
+      name: 'Fretes',
+      path: '/client/freights?tab=operation',
+      icon: <Package size={20} />,
+      children: [
+        { name: 'Operação de Fretes', path: '/client/freights?tab=operation', icon: <Package size={18} /> },
+        { name: 'CT-e / MDF-e', path: '/client/freights?tab=cte-mdfe', icon: <FileCheck2 size={18} /> },
+      ],
+    },
     { name: 'Despesas', path: '/client/expenses', icon: <PieChart size={20} /> },
-    { name: 'Fretes', path: '/client/freights', icon: <Package size={20} /> },
     { name: 'Financeiro', path: '/client/financial', icon: <DollarSign size={20} /> },
     { name: 'Motoristas', path: '/client/drivers', icon: <Users size={20} /> },
     { name: 'Relatórios', path: '/client/reports', icon: <FileBarChart size={20} /> },

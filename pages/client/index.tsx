@@ -19,12 +19,14 @@ const ClientDashboard: React.FC = () => {
         <Route path="/" element={<Overview />} />
         <Route path="/fleet" element={<Fleet />} />
         <Route path="/freights" element={<Freights />} />
+        <Route path="/freights/cte-mdfe" element={<Navigate to="/client/freights?tab=cte-mdfe" replace />} />
         <Route path="/drivers" element={<Drivers />} />
         <Route path="/expenses" element={<Expenses />} />
         <Route path="/maintenances" element={<Navigate to="/client/fleet?tab=maintenance" replace />} />
         <Route path="/documents" element={<Navigate to="/client/fleet?tab=docs" replace />} />
         <Route path="/financial" element={<Financial />} />
         <Route path="/reports" element={<Reports />} />
+        <Route path="/cte-mdfe" element={<Navigate to="/client/freights?tab=cte-mdfe" replace />} />
       </Routes>
     </DashboardLayout>
   );

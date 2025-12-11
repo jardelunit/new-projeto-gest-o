@@ -52,6 +52,24 @@ export interface Freight {
   date: string;
   vehicleId?: string;
   driverId?: string; // Novo: vínculo direto para histórico
+  cteNumber?: string;
+  cteStatus?: 'Autorizado' | 'Rejeitado' | 'Pendente' | 'Em Processamento';
+  nfeKey?: string;
+  mdfStatus?: 'N/A' | 'Aberto' | 'Encerrado';
+  cteType?: 'Normal' | 'Substituição' | 'Anulação';
+  serviceTaker?: string;
+  routeUFs?: string[];
+  pickupDate?: string;
+  deliveryDate?: string;
+  freightComponents?: {
+    total: number;
+    adValorem?: number;
+    gris?: number;
+    pedagio?: number;
+    regimeTributario?: string;
+    baseCalculo?: number;
+    aliquota?: number;
+  };
 }
 
 export interface Expense {

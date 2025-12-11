@@ -15,15 +15,13 @@ interface UseFreightsReturn {
   freights: Freight[];
   selectedFreight: Freight | null;
   selectFreight: (freight: Freight | null) => void;
-  isCreateModalOpen: boolean;
-  openCreateModal: () => void;
-  closeCreateModal: () => void;
+  isWizardOpen: boolean;
+  openWizard: () => void;
+  closeWizard: () => void;
   isExpenseModalOpen: boolean;
   openExpenseModal: () => void;
   closeExpenseModal: () => void;
-  formData: Partial<Freight>;
-  setFormData: React.Dispatch<React.SetStateAction<Partial<Freight>>>;
-  handleCreate: (event: React.FormEvent<HTMLFormElement>) => void;
+  addFreight: (data: Partial<Freight>) => void;
   handleStatusUpdate: (id: string, newStatus: Freight['status']) => void;
   drivers: Driver[];
   vehicles: Vehicle[];
@@ -34,20 +32,11 @@ interface UseFreightsReturn {
   getExpensesByFreight: (freightId: string) => Expense[];
 }
 
-const initialFormData: Partial<Freight> = {
-  origin: '',
-  destination: '',
-  value: 0,
-  date: new Date().toISOString().split('T')[0],
-  status: 'Pendente',
-};
-
 const useFreights = (): UseFreightsReturn => {
   const [freights, setFreights] = useState<Freight[]>(() => fetchFreights());
   const [selectedFreight, setSelectedFreight] = useState<Freight | null>(null);
-  const [isCreateModalOpen, setCreateModalOpen] = useState(false);
+  const [isWizardOpen, setWizardOpen] = useState(false);
   const [isExpenseModalOpen, setExpenseModalOpen] = useState(false);
-  const [formData, setFormData] = useState<Partial<Freight>>(initialFormData);
 
   const drivers = useMemo(() => fetchDrivers(), []);
   const vehicles = useMemo(() => fetchVehicles(), []);
@@ -57,22 +46,17 @@ const useFreights = (): UseFreightsReturn => {
     setExpenseModalOpen(false);
   }, []);
 
-  const openCreateModal = useCallback(() => setCreateModalOpen(true), []);
-  const closeCreateModal = useCallback(() => setCreateModalOpen(false), []);
+  const openWizard = useCallback(() => setWizardOpen(true), []);
+  const closeWizard = useCallback(() => setWizardOpen(false), []);
 
   const openExpenseModal = useCallback(() => setExpenseModalOpen(true), []);
   const closeExpenseModal = useCallback(() => setExpenseModalOpen(false), []);
 
-  const handleCreate = useCallback(
-    (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      const newFreight = createFreight(formData);
-      setFreights(prev => [newFreight, ...prev]);
-      setCreateModalOpen(false);
-      setFormData({ ...initialFormData, date: '' });
-    },
-    [formData],
-  );
+  const addFreight = useCallback((data: Partial<Freight>) => {
+    const newFreight = createFreight(data);
+    setFreights(prev => [newFreight, ...prev]);
+    setWizardOpen(false);
+  }, []);
 
   const handleStatusUpdate = useCallback(
     (id: string, newStatus: Freight['status']) => {
@@ -102,15 +86,13 @@ const useFreights = (): UseFreightsReturn => {
     freights,
     selectedFreight,
     selectFreight,
-    isCreateModalOpen,
-    openCreateModal,
-    closeCreateModal,
+    isWizardOpen,
+    openWizard,
+    closeWizard,
     isExpenseModalOpen,
     openExpenseModal,
     closeExpenseModal,
-    formData,
-    setFormData,
-    handleCreate,
+    addFreight,
     handleStatusUpdate,
     drivers,
     vehicles,
